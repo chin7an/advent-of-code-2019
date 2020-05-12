@@ -1,0 +1,51 @@
+#!/usr/bin/env ruby
+require 'optionparser'
+require 'json'
+
+config = JSON.parse(File.read('./config/challenges.json'))
+
+options = {}
+cliparser = OptionParser.new do |opts|
+  opts.banner = "Usage: adv [options]"
+
+  opts.on('-d', '--day CODE_DAY', Integer, 'Execute the challenges for the given day') do |day|
+    options[:day] = "day#{day}"
+  end
+
+  opts.on('-p', '--part PART', Integer, 'Execute the given part of the daily challenge') do |part|
+    options[:part] = "part#{part}"
+  end
+end
+
+begin
+    cliparser.parse!
+    required = [:day, :part]
+    missing = required.select{ |param| options[param].nil? }
+    unless missing.empty?
+        raise OptionParser::MissingArgument.new(missing.join(', '))
+    end
+
+    day = config[options[:day]]
+    part = day[options[:part]] unless day.nil?
+
+    if day.nil? || part.nil?
+        raise OptionParser::InvalidOption.new('Invalid day or part specified')
+    end
+rescue OptionParser::InvalidOption, OptionParser::MissingArgument
+    puts $!.to_s
+    puts cliparser
+    exit
+end
+
+__LIB__ = '../lib/'
+require_relative(__LIB__ + day['module'])
+include Module.const_get(day['module'])
+
+__DATA__ = '/../data/'
+part['tests']&.each do |file|
+    result = Object.public_send(part['method'], __DATA__ + file)
+    puts "#{options[:day]}, #{options[:part]} test result\n#{result}"
+end
+
+result = Object.public_send(part['method'], __DATA__ + part['data'])
+puts "#{options[:day]}, #{options[:part]} result\n#{result}"

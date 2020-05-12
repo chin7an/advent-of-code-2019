@@ -1,0 +1,30 @@
+{
+  "day1": {
+    "module": "Fuel",
+    "part1": {
+      "method": "fuel_counter",
+      "data": "day1/module_mass.txt"
+    },
+    "part2": {
+      "method": "rocket_equation",
+      "data": "day1/module_mass.txt"
+    }
+  },
+  "day2": {
+    "module": "IntCode",
+    "part1": {
+      "method": "int_code",
+      "data": "day2/intcode.txt",
+      "tests": [
+        "day2/test1.txt",
+        "day2/test2.txt",
+        "day2/test3.txt",
+        "day2/test4.txt"
+      ]
+    },
+    "part2": {
+      "method": "int_code_improved",
+      "data": "day2/intcode.txt"
+    }
+  }
+}
